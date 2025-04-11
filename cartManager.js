@@ -24,3 +24,7 @@ function saveCart(cart) {
     saveCart(carts);
     return newCart;
   }
+  function getCartById(cid){
+    const carts = loadCart();
+    return carts.find(cart => cart.id === cid);
+  };
