@@ -36,7 +36,7 @@ function saveCart(cart) {
       console.log(`carrito con ID ${cid} no encontrado`);
       return null;
     }
-    const productIndex = carts.products.findIndex(p => p.product === pid);
+    const productIndex = cart.products.findIndex(p => p.product === pid);
     if (productIndex !== -1){
       cart.products[productIndex].quantity += 1;
     } else{

@@ -21,12 +21,14 @@ function addProduct(product){
     fs.writeFileSync(pathProductos,JSON.stringify(productos));
 };
 
-function updateProduct(pid, updated){
+function updateProduct(pid, updatedFields){
     const productos = getProducts();
     const index = productos.findIndex(p => p.id === pid);
-    if (index !== -1) return
-    productos[index] = {...productos[index], ...updated, id : pid};
-    fs.writeFileSync(pathProductos,JSON.stringify(productos));
+
+    if (index === -1) return
+    productos[index] = {...productos[index], ...updatedFields, id : pid};
+    fs.writeFileSync(pathProductos, JSON.stringify(productos));
+    return productos[index];
 };
 
 
