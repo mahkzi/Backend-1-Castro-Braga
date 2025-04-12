@@ -28,3 +28,26 @@ function saveCart(cart) {
     const carts = loadCart();
     return carts.find(cart => cart.id === cid);
   };
+
+  function addProductToCart(cid, pid){
+    const carts = loadCart();
+    const cart = carts.find(c => c.id === cid);
+    if (!cart) {
+      console.log(`carrito con ID ${cid} no encontrado`);
+      return null;
+    }
+    const productIndex = carts.products.findIndex(p => p.product === pid);
+    if (productIndex !== -1){
+      cart.products[productIndex].quantity += 1;
+    } else{
+      cart.products.push({product:pid, quantity:1});
+    }
+    saveCart(carts);
+    return cart;
+  };
+
+  module.exports = {
+    createCart,
+    getCartById,
+    addProductToCart
+  };

@@ -15,13 +15,17 @@ function getProductById(pid){
 
 function addProduct(product){
     const productos = getProducts();
+    const newId = productos.length > 0 ? productos[productos.length - 1].id + 1 : 1;
+    product.id = newId;
     productos.push(product);
     fs.writeFileSync(pathProductos,JSON.stringify(productos));
 };
 
 function updateProduct(pid, updated){
     const productos = getProducts();
-    productos[ pid- 1 ] = updated;
+    const index = productos.findIndex(p => p.id === pid);
+    if (index !== -1) return
+    productos[index] = {...productos[index], ...updated, id : pid};
     fs.writeFileSync(pathProductos,JSON.stringify(productos));
 };
 
