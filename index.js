@@ -1,2 +1,5 @@
-const viewsRouter = require("./routes/views.router");
+const viewsRouter = require("./routes/vistas.router");
 app.use("/", viewsRouter);
+
+const socketManager = require("./utils/socketManager");
+socketManager(io);
