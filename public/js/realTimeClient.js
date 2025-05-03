@@ -20,6 +20,15 @@ socket.on("updateProducts", (products)=>{
     products.forEach((p)=>{
         const li = document.createElement("li");
         li.textContent = `${p.nombre} - $${p.precio}`;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Eliminar";
+        deleteButton.classList.add("delete-button");
+
+        deleteButton.addEventListener("click", ()=>{
+            socket.emit("deleteProduct", p.id);
+        });
+        li.appendChild(deleteButton);
         productList.appendChild(li);
     });
 });
