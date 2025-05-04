@@ -12,4 +12,8 @@ const products = productManager.getProducts();
 res.render("realimeproducts", {products});
 });
 
+router.get("/", (req, res) => {
+    res.redirect("/home");
+  });
+
 module.exports = router;

@@ -1,8 +1,9 @@
 <h1>Productos en tiempo real y actualizables</h1>
 <ul id="product-list">
     {{#each products}}
-    <li data-id="{{id}}">{{nombre}} - ${{precio}}</li>
-    <button class="delete-button">Eliminar producto</button>
+    <li data-id="{{id}}">{{nombre}} - ${{precio}}
+        <button class="delete-button">Eliminar producto</button>
+    </li>
     {{/each}}
 </ul>
 

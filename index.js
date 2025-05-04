@@ -12,7 +12,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.engine("hanldebars", handlebars.engine());
+app.engine("handlebars", handlebars.engine({
+    defaultLayout: "main",
+}));
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+app.use("/", viewsRouter);
+socketManager(io);
+
+const PORT = 3000;
+server.listen(PORT, ()=>{
+    console.log(`servidor en http://localhost:${PORT}`);
+});

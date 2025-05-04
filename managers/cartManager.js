@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const pathCarts = path.join(__dirname, "cart.json");
+const pathCarts = path.join(__dirname, "../data/cart.json");
 
 function loadCart() {
     if (!fs.existsSync(pathCarts)) {

@@ -1,12 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
-const pathProductos = path.join(__dirname, "products.json");
+const pathProductos = path.join(__dirname, "../data/products.json");
 
-function getProducts(){
-    const productos = fs.readFileSync(pathProductos,"utf-8");
-    return JSON.parse(productos);
-};
+function getProducts() {
+        if (!fs.existsSync(pathProductos)) {
+            fs.writeFileSync(pathProductos, "[]", "utf-8");
+        }
+
+        const productos = fs.readFileSync(pathProductos, "utf-8");
+        return JSON.parse(productos);
+    };
 
 function getProductById(pid){
     const productos = getProducts();
@@ -33,6 +37,7 @@ function updateProduct(pid, updatedFields){
 
 
 function deleteProduct(pid){
+    pid = Number(pid);
     let productos = getProducts();
     productos = productos.filter(product => product.id !== pid);
     fs.writeFileSync(pathProductos,JSON.stringify(productos));

@@ -5,7 +5,7 @@ const productList = document.getElementById("product-list");
 
 form.addEventListener("submit", (e)=>{
     e.preventDefault();
-    const formData = new formData(form);
+    const formData = new FormData(form);
 const product = {
     nombre: formData.get("nombre"),
     precio: parseFloat(formData.get("precio"))
