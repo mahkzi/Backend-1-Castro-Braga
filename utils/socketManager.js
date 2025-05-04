@@ -9,7 +9,7 @@ function socketManager (io){
             io.emit("updateProducts", productManager.getProducts());
         });
 
-        socket.on("deleteProducts", (pid) => {
+        socket.on("deleteProduct", (pid) => {
             productManager.deleteProduct(pid);
             io.emit("updateProducts", productManager.getProducts());
         });

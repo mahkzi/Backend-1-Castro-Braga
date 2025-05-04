@@ -39,7 +39,7 @@ function updateProduct(pid, updatedFields){
 function deleteProduct(pid){
     pid = Number(pid);
     let productos = getProducts();
-    productos = productos.filter(product => product.id !== pid);
+    productos = productos.filter(product => Number(product.id) !==Number (pid));
     fs.writeFileSync(pathProductos,JSON.stringify(productos));
 };
 

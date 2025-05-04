@@ -26,6 +26,7 @@ socket.on("updateProducts", (products)=>{
         deleteButton.classList.add("delete-button");
 
         deleteButton.addEventListener("click", ()=>{
+            console.log("Eliminando producto con ID:", p.id);
             socket.emit("deleteProduct", p.id);
         });
         li.appendChild(deleteButton);
