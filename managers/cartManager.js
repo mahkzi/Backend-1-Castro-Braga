@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const {getProductById} = require ("./productManager");
 
 const pathCarts = path.join(__dirname, "../data/cart.json");
 
@@ -36,11 +37,30 @@ function saveCart(cart) {
       console.log(`carrito con ID ${cid} no encontrado`);
       return null;
     }
+    const producto = getProductById(pid);
+    if (!producto){
+      console.log(`producto con ID ${pid} no encontrado`);
+      return null;
+    }
+
     const productIndex = cart.products.findIndex(p => p.product === pid);
     if (productIndex !== -1){
-      cart.products[productIndex].quantity += 1;
+      const currentQty = cart.products[productIndex].quantity;
+        if (currentQty + 1 > producto.stock) {
+            console.log(`No se puede agregar más del stock disponible`);
+            return null;
+        }
+         cart.products[productIndex].quantity += 1;
     } else{
-      cart.products.push({product:pid, quantity:1});
+       if (producto.stock < 1) {
+            console.log(`No hay stock disponible`);
+            return null;
+        }
+      cart.products.push({
+        product:pid,
+        nombre: producto.nombre,
+        precio: producto.precio,
+        quantity:1});
     }
     saveCart(carts);
     return cart;

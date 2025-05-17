@@ -3,6 +3,7 @@ const {Server} = require ("socket.io");
 const handlebars = require ("express-handlebars");
 const path = require ("path");
 const viewsRouter = require("./routes/vistas.router");
+const cartsRouter = require("./routes/carts.router");
 const socketManager = require("./utils/socketManager.js");
 const app = express();
 const server = require ("http").createServer(app);
@@ -20,8 +21,7 @@ app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/", viewsRouter);
-const cartRouter = require("./routes/cart.router");
-app.use("/",cartRouter);
+app.use(cartsRouter);
 socketManager(io);
 
 const PORT = 3000;
