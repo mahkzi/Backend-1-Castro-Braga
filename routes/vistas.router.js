@@ -11,9 +11,8 @@ router.get("/home", (req, res)=>{
 
 router.get("/homeprueba",async (req, res) =>{
   try{
-let products = await userModel.find();
-console.log(products);
-res.send(({result:"success", payload:products}))
+let products = await userModel.find().lean();
+res.render("homeprueba",{products})
   }catch (error){
     console.error("ocurrió un error inesperado", error)
   }
