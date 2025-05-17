@@ -6,8 +6,11 @@
       <li>
         <strong>{{nombre}}</strong> - ${{precio}} - Stock: {{stock}} <br>
         <em>{{detalle}}</em>
+        <br>
+        <button class="add-to-cart" data-id="{{id}}" data-nombre="{{nombre}}" data-precio="{{precio}}">
+           Agregar al carrito
+        </button>
       </li>
-      <button class="add-to-cart" data-id="{{_id}}" data-nombre="{{nombre}}" data-precio="{{precio}}">Agregar al carrito</button>
     {{/each}}
   </ul>
 {{else}}

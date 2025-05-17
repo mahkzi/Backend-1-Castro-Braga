@@ -20,6 +20,8 @@ app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/", viewsRouter);
+const cartRouter = require("./routes/cart.router");
+app.use("/",cartRouter);
 socketManager(io);
 
 const PORT = 3000;
