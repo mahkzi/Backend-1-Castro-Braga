@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const {getProductById} = require ("./productManager");
+const productModel = require("../src/models/product.model");
+
 
 const pathCarts = path.join(__dirname, "../data/cart.json");
 
@@ -30,41 +31,45 @@ function saveCart(cart) {
     return carts.find(cart => cart.id === cid);
   };
 
-  function addProductToCart(cid, pid){
-    const carts = loadCart();
-    const cart = carts.find(c => c.id === cid);
-    if (!cart) {
-      console.log(`carrito con ID ${cid} no encontrado`);
+ async function addProductToCart(cid, pid) {
+  const carts = loadCart();
+  const cart = carts.find(c => c.id === cid);
+  if (!cart) {
+    console.log(`Carrito con ID ${cid} no encontrado`);
+    return null;
+  }
+
+  const producto = await productModel.findById(pid).lean();
+  if (!producto) {
+    console.log(`Producto con ID ${pid} no encontrado en MongoDB`);
+    return null;
+  }
+
+  const productIndex = cart.products.findIndex(p => p.product === pid);
+  if (productIndex !== -1) {
+    const currentQty = cart.products[productIndex].quantity;
+    if (currentQty + 1 > producto.stock) {
+      console.log(`No se puede agregar más del stock disponible`);
       return null;
     }
-    const producto = getProductById(pid);
-    if (!producto){
-      console.log(`producto con ID ${pid} no encontrado`);
+    cart.products[productIndex].quantity += 1;
+  } else {
+    if (producto.stock < 1) {
+      console.log(`No hay stock disponible`);
       return null;
     }
 
-    const productIndex = cart.products.findIndex(p => p.product === pid);
-    if (productIndex !== -1){
-      const currentQty = cart.products[productIndex].quantity;
-        if (currentQty + 1 > producto.stock) {
-            console.log(`No se puede agregar más del stock disponible`);
-            return null;
-        }
-         cart.products[productIndex].quantity += 1;
-    } else{
-       if (producto.stock < 1) {
-            console.log(`No hay stock disponible`);
-            return null;
-        }
-      cart.products.push({
-        product:pid,
-        nombre: producto.nombre,
-        precio: producto.precio,
-        quantity:1});
-    }
-    saveCart(carts);
-    return cart;
-  };
+    cart.products.push({
+      product: pid, 
+      nombre: producto.nombre,
+      precio: producto.precio,
+      quantity: 1
+    });
+  }
+
+  saveCart(carts);
+  return cart;
+}
 
   module.exports = {
     createCart,

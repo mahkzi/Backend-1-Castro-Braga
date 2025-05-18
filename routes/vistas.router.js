@@ -1,7 +1,7 @@
 const express = require ("express");
 const router = express.Router();
 const productManager = require ("../managers/productManager");
-const userModel = require ("../src/models/user.model")
+const productModel = require ("../src/models/product.model")
 
 router.get("/home", (req, res)=>{
     const products = productManager.getProducts();
@@ -11,7 +11,7 @@ router.get("/home", (req, res)=>{
 
 router.get("/homeprueba",async (req, res) =>{
   try{
-let products = await userModel.find().lean();
+let products = await productModel.find().lean();
 res.render("homeprueba",{products})
   }catch (error){
     console.error("ocurrió un error inesperado", error)
