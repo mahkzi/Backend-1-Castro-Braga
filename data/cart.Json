@@ -3,28 +3,28 @@
         "id": 1,
         "products": [
             {
-                "product": "6827351e2d7b865eb57b751c",
-                "nombre": "Cargador USB-C",
-                "precio": 1299.99,
-                "quantity": 1
-            },
-            {
-                "product": "6827351e2d7b865eb57b751d",
-                "nombre": "Webcam HD",
-                "precio": 5999,
-                "quantity": 1
-            },
-            {
                 "product": "6827351e2d7b865eb57b751a",
                 "nombre": "Teclado Mecánico",
                 "precio": 7499.5,
                 "quantity": 1
             },
             {
+                "product": "6827351e2d7b865eb57b751b",
+                "nombre": "Silla Ergonómica",
+                "precio": 18999,
+                "quantity": 1
+            },
+            {
                 "product": "6827351e2d7b865eb57b7519",
                 "nombre": "Auriculares Bluetooth",
                 "precio": 3999.99,
-                "quantity": 3
+                "quantity": 6
+            },
+            {
+                "product": "6827351e2d7b865eb57b751d",
+                "nombre": "Webcam HD",
+                "precio": 5999,
+                "quantity": 10
             }
         ]
     }

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const productModel = require("../src/models/product.model");
+const { getProductById } = require("./productManager");
 
 
 const pathCarts = path.join(__dirname, "../data/cart.json");
@@ -39,16 +40,18 @@ function saveCart(cart) {
     return null;
   }
 
-  const producto = await productModel.findById(pid).lean();
+   const producto = await getProductById(pid);
   if (!producto) {
-    console.log(`Producto con ID ${pid} no encontrado en MongoDB`);
+    console.log(`Producto con ID ${pid} no encontrado`);
     return null;
   }
 
-  const productIndex = cart.products.findIndex(p => p.product === pid);
+  const productIndex = cart.products.findIndex(
+    (p) => String(p.product) === String(pid)
+  );
+
   if (productIndex !== -1) {
-    const currentQty = cart.products[productIndex].quantity;
-    if (currentQty + 1 > producto.stock) {
+    if (cart.products[productIndex].quantity + 1 > producto.stock) {
       console.log(`No se puede agregar más del stock disponible`);
       return null;
     }
@@ -58,12 +61,11 @@ function saveCart(cart) {
       console.log(`No hay stock disponible`);
       return null;
     }
-
     cart.products.push({
-      product: pid, 
+      product: pid,
       nombre: producto.nombre,
       precio: producto.precio,
-      quantity: 1
+      quantity: 1,
     });
   }
 

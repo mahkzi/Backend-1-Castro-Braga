@@ -9,9 +9,9 @@ router.post("/api/carts/:cid/products/:pid", async (req, res) => {
   try {
     const updatedCart = await addProductToCart(cid, pid);
     if (!updatedCart) {
-      return res.status(400).send({ error: "No se pudo agregar el producto" });
+      return res.status(400).send({ error: "Su pedido a superado el stock disponible" });
     }
-    res.status(200).send({ message: "su producto se ha agregado correctamente", cart: updatedCart });
+    res.status(200).send({ message: "El producto se ha agregado correctamente", cart: updatedCart });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error interno del servidor" });

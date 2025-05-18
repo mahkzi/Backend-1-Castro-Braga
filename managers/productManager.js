@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const productModel = require("../src/models/product.model");
 
 const pathProductos = path.join(__dirname, "../data/products.json");
 
@@ -12,10 +13,15 @@ function getProducts() {
         return JSON.parse(productos);
     };
 
-function getProductById(pid){
-    const productos = getProducts();
-    return productos.find(producto => producto.id === pid)
-};
+async function getProductById(pid) {
+  try {
+    const product = await productModel.findById(pid).lean();
+    return product; 
+  } catch (error) {
+    console.error("Error en getProductById:", error);
+    return null;
+  }
+}
 
 function addProduct(product){
     const productos = getProducts();
