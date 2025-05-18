@@ -1,28 +1,20 @@
-<h1>Carrito #{{cart.id}}</h1>
+<h1>Tu carrito</h1>
 
-{{#if cart.products.length}}
-  <table border="1" cellpadding="8">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Precio</th>
-        <th>Cantidad</th>
-        <th>Subtotal</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each cart.products}}
-        <tr>
-          <td>{{this.nombre}}</td>
-          <td>${{this.precio}}</td>
-          <td>{{this.quantity}}</td>
-          <td>${{this.subtotal}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
+<ul id="cart-list">
+  {{#if cart.products.length}}
+    {{#each cart.products}}
+      <li data-product-id="{{product}}">
+        <strong>{{nombre}}</strong> - ${{precio}} x 
+        <span class="quantity">{{quantity}}</span>
+        <button class="btn-decrease" data-id="{{product}}">-</button>
+        <button class="btn-increase" data-id="{{product}}">+</button>
+        <button class="btn-remove" data-id="{{product}}">Eliminar</button>
+      </li>
+    {{/each}}
+  {{else}}
+    <p>Tu carrito está vacío</p>
+  {{/if}}
+</ul>
 
-  <h3>Total: ${{total}}</h3>
-{{else}}
-  <p>El carrito está vacío.</p>
-{{/if}}
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/cart.js"></script>

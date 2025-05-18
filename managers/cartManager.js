@@ -72,9 +72,38 @@ function saveCart(cart) {
   saveCart(carts);
   return cart;
 }
+function decreaseProductInCart(cid, pid) {
+  const carts = loadCart();
+  const cart = carts.find(c => c.id === cid);
+  if (!cart) return;
+
+  const index = cart.products.findIndex(p => p.product === pid);
+  if (index === -1) return;
+
+  if (cart.products[index].quantity > 1) {
+    cart.products[index].quantity -= 1;
+  } else {
+    cart.products.splice(index, 1); 
+  }
+
+  saveCart(carts);
+  return cart;
+}
+
+function removeProductFromCart(cid, pid) {
+  const carts = loadCart();
+  const cart = carts.find(c => c.id === cid);
+  if (!cart) return;
+
+  cart.products = cart.products.filter(p => p.product !== pid);
+  saveCart(carts);
+  return cart;
+}
 
   module.exports = {
     createCart,
     getCartById,
-    addProductToCart
+    addProductToCart,
+    decreaseProductInCart,
+    removeProductFromCart
   };

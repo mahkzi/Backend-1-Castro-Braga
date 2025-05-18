@@ -1,19 +1,34 @@
-const productManager = require("../managers/productManager");
+const { getCartById, addProductToCart, decreaseProductInCart, removeProductFromCart } = require('../managers/cartManager');
 
-function socketManager (io){
-    io.on("connection", (socket) => {
-        console.log("cliente conectado");
+function socketManager(io) {
+  io.on('connection', socket => {
+    console.log('Usuario conectado');
 
-        socket.on("newProduct", (productData)=>{
-            productManager.addProduct(productData);
-            io.emit("updateProducts", productManager.getProducts());
-        });
+     const cartId = 1;
 
-        socket.on("deleteProduct", (pid) => {
-            productManager.deleteProduct(pid);
-            io.emit("updateProducts", productManager.getProducts());
-        });
-    }); 
+      socket.on('getCart', () => {
+      const cart = getCartById(cartId);
+      socket.emit('cartUpdated', cart);
+    });
+
+     socket.on('increaseProduct', pid => {
+      addProductToCart(cartId, pid);
+      const updatedCart = getCartById(cartId);
+      io.emit('cartUpdated', updatedCart);
+    });
+
+     socket.on('decreaseProduct', pid => {
+      decreaseProductInCart(cartId, pid);
+      const updatedCart = getCartById(cartId);
+      io.emit('cartUpdated', updatedCart);
+    });
+    socket.on('removeProduct', pid => {
+      removeProductFromCart(cartId, pid);
+      const updatedCart = getCartById(cartId);
+      io.emit('cartUpdated', updatedCart);
+    });
+  });
 }
+
 
 module.exports = socketManager;
