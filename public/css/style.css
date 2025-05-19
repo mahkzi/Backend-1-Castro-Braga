@@ -43,39 +43,148 @@ body {
     text-transform: capitalize;
   }
 
-  #product-list {
-    list-style: none;
-    padding: 0;
-    margin: 2rem auto;
-    max-width: 600px;
-  }
-  #product-list li {
-    background-color: white;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .delete-button,
-#product-form button {
+  ul.product-list {
+  max-width: 700px;
+  margin: 2rem auto 4rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+ul.product-list li {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  text-transform: capitalize;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+ul.product-list li:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+ul.product-list li strong {
+  font-size: 1.2rem;
+  color: #222;
+}
+
+ul.product-list li em {
+  font-style: normal;
+  color: #666;
+  font-size: 0.9rem;
+  flex-grow: 1;
+}
+
+ul.product-list li span.stock {
+  font-weight: 600;
+  color: #0a7;
+}
+
+button.add-to-cart {
+  align-self: flex-start;
   background-color: grey;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
- #product-form {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+
+button.add-to-cart:hover {
+  background-color: #555;
+}
+
+#cart-list,
+#product-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+#cart-list li {
+  gap: 0.5rem;
+}
+
+#cart-list li button {
+  background-color: grey;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+#cart-list li button:hover {
+  background-color: #555;
+}
+
+.btn-clear-cart,
+.btn-finalize {
+  background-color: grey;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 0.5rem 1rem 1rem 0;
+  transition: background-color 0.3s ease;
+}
+
+.btn-clear-cart:hover,
+.btn-finalize:hover {
+  background-color: #555;
+}
+
+.cart-actions {
+  max-width: 600px;
+  margin: 1rem auto 3rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+
+.btn-clear-cart,
+.btn-finalize {
+  background-color: #555;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-clear-cart:hover,
+.btn-finalize:hover {
+  background-color: #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+
+.btn-finalize {
+  background-color: #007bff;
+  box-shadow: 0 2px 6px rgba(0,123,255,0.4);
+}
+
+.btn-finalize:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 12px rgba(0,86,179,0.7);
+}

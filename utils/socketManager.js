@@ -1,4 +1,4 @@
-const { getCartById, addProductToCart, decreaseProductInCart, removeProductFromCart } = require('../managers/cartManager');
+const { getCartById, addProductToCart, decreaseProductInCart, removeProductFromCart, clearCart } = require('../managers/cartManager');
 
 function socketManager(io) {
   io.on('connection', socket => {
@@ -27,8 +27,13 @@ function socketManager(io) {
       const updatedCart = getCartById(cartId);
       io.emit('cartUpdated', updatedCart);
     });
+     socket.on('clearCart', () => {
+      clearCart(cartId);
+      socket.emit('cartCleared'); 
+    });
   });
 }
+
 
 
 module.exports = socketManager;

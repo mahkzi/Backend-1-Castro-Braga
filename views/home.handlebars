@@ -1,6 +1,18 @@
-<h1>Lista de productos estáticos</h1>
-<ul id="static-ul">
+<h1>Lista de Productos desde MongoDB</h1>
+
+{{#if products.length}}
+  <ul class="product-list">
     {{#each products}}
-    <li> {{nombre}} - ${{precio}}</li>
-    {{/each}}
-</ul>
+  <li>
+    <strong>{{nombre}}</strong> - ${{precio}} - Stock: {{stock}} <br>
+    <em>{{detalle}}</em>
+    <br>
+    <button class="add-to-cart" data-id="{{_id}}">Agregar al carrito</button>
+  </li>
+{{/each}}
+  </ul>
+{{else}}
+  <p>Ocurrió un error inesperado</p>
+{{/if}}
+
+<script src="/js/home.js"></script>

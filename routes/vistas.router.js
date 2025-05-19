@@ -4,26 +4,15 @@ const productManager = require ("../managers/productManager");
 const productModel = require ("../src/models/product.model")
 const { getCartById } = require("../managers/cartManager");
 
-router.get("/home", (req, res)=>{
-    const products = productManager.getProducts();
-    res.render("home", {products});
-    
-});
-
-router.get("/homeprueba",async (req, res) =>{
-  try{
-let products = await productModel.find().lean();
-res.render("homeprueba",{products})
-  }catch (error){
-    console.error("ocurrió un error inesperado", error)
+router.get("/home", async (req, res) => {
+  try {
+    const products = await productModel.find().lean();
+    res.render("home", { products }); 
+  } catch (error) {
+    console.error("Ocurrió un error inesperado", error);
+    res.status(500).send("Error interno del servidor");
   }
-})
-
-router.get("/realtimeproducts", (req, res)=>{
-const products = productManager.getProducts();
-res.render("realimeproducts", {products});
 });
-
 router.get("/cart", (req, res) => {
   const cartId = 1;
   const cart = getCartById(cartId);

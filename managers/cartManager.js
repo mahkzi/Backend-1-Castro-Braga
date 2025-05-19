@@ -99,11 +99,21 @@ function removeProductFromCart(cid, pid) {
   saveCart(carts);
   return cart;
 }
+function clearCart(cid) {
+  const carts = loadCart();
+  const cart = carts.find(c => c.id === cid);
+  if (cart) {
+    cart.products = [];
+    saveCart(carts);
+  }
+  return cart;
+}
 
   module.exports = {
     createCart,
     getCartById,
     addProductToCart,
     decreaseProductInCart,
-    removeProductFromCart
+    removeProductFromCart,
+    clearCart
   };
