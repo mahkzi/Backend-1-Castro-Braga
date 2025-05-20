@@ -1,39 +1,63 @@
-const { getCartById, addProductToCart, decreaseProductInCart, removeProductFromCart, clearCart } = require('../managers/cartManager');
+const cartManager = require('../managers/cartManager');
+const CART_ID = '682c903dacf893fbe6f80b29';
 
-function socketManager(io) {
-  io.on('connection', socket => {
-    console.log('Usuario conectado');
+const socketManager = (io) => {
+  io.on('connection', async (socket) => {
+    console.log('Cliente conectado');
 
-     const cartId = 1;
 
-      socket.on('getCart', () => {
-      const cart = getCartById(cartId);
-      socket.emit('cartUpdated', cart);
-    });
+    const cart = await cartManager.getCartById(CART_ID);
+    socket.emit('cartUpdated', cart);
 
-     socket.on('increaseProduct', pid => {
-      addProductToCart(cartId, pid);
-      const updatedCart = getCartById(cartId);
+
+    socket.on('updateCart', async () => {
+      const updatedCart = await cartManager.getCartById(CART_ID);
       io.emit('cartUpdated', updatedCart);
     });
 
-     socket.on('decreaseProduct', pid => {
-      decreaseProductInCart(cartId, pid);
-      const updatedCart = getCartById(cartId);
-      io.emit('cartUpdated', updatedCart);
+
+    socket.on('increaseProduct', async (productId) => {
+      try {
+        await cartManager.updateQuantity(CART_ID, productId, 1);
+        const updatedCart = await cartManager.getCartById(CART_ID);
+        io.emit('cartUpdated', updatedCart);
+      } catch (error) {
+        socket.emit('error', error.message);
+      }
     });
-    socket.on('removeProduct', pid => {
-      removeProductFromCart(cartId, pid);
-      const updatedCart = getCartById(cartId);
-      io.emit('cartUpdated', updatedCart);
+
+
+    socket.on('decreaseProduct', async (productId) => {
+      try {
+        await cartManager.updateQuantity(CART_ID, productId, -1);
+        const updatedCart = await cartManager.getCartById(CART_ID);
+        io.emit('cartUpdated', updatedCart);
+      } catch (error) {
+        socket.emit('error', error.message);
+      }
     });
-     socket.on('clearCart', () => {
-      clearCart(cartId);
-      socket.emit('cartCleared'); 
+
+    socket.on('removeProduct', async (productId) => {
+      try {
+        await cartManager.removeProduct(CART_ID, productId);
+        const updatedCart = await cartManager.getCartById(CART_ID);
+        io.emit('cartUpdated', updatedCart);
+      } catch (error) {
+        socket.emit('error', error.message);
+      }
+    });
+
+
+    socket.on('clearCart', async () => {
+      try {
+        await cartManager.clearCart(CART_ID);
+        io.emit('cartUpdated', { products: [] });
+        socket.emit('cartCleared');
+      } catch (error) {
+        socket.emit('error', error.message);
+      }
     });
   });
-}
-
-
+};
 
 module.exports = socketManager;

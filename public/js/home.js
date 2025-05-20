@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buttons.forEach(button => {
         button.addEventListener("click", async () => {
           const productId = button.getAttribute("data-id");
-            const cartId = 1;
+            const cartId = "682c903dacf893fbe6f80b29";
 
             try {
                 const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {

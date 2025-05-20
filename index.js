@@ -2,16 +2,20 @@ const express = require("express");
 const {Server} = require ("socket.io");
 const handlebars = require ("express-handlebars");
 const path = require ("path");
-const viewsRouter = require("./routes/vistas.router");
-const cartsRouter = require("./routes/carts.router");
+const mongoose  = require("mongoose");
+
+const viewsRouter = require("./routes/vistas.router.js");
+const cartsRouter = require("./routes/carts.router.js");
 const socketManager = require("./utils/socketManager.js");
+
 const app = express();
 const server = require ("http").createServer(app);
 const io = new Server(server);
-const mongoose  = require("mongoose");
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.engine("handlebars", handlebars.engine({

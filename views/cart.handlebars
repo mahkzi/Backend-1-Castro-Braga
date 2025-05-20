@@ -3,18 +3,19 @@
 <ul id="cart-list">
   {{#if cart.products.length}}
     {{#each cart.products}}
-      <li data-product-id="{{product}}">
-        <strong>{{nombre}}</strong> - ${{precio}} x 
+      <li data-product-id="{{product._id}}">
+        <strong>{{product.nombre}}</strong> - ${{product.precio}} x 
         <span class="quantity">{{quantity}}</span>
-        <button class="btn-decrease" data-id="{{product}}">-</button>
-        <button class="btn-increase" data-id="{{product}}">+</button>
-        <button class="btn-remove" data-id="{{product}}">Eliminar</button>
+        <button class="btn-decrease" data-id="{{product._id}}">-</button>
+        <button class="btn-increase" data-id="{{product._id}}">+</button>
+        <button class="btn-remove" data-id="{{product._id}}">Eliminar</button>
       </li>
     {{/each}}
   {{else}}
     <p>Tu carrito está vacío</p>
   {{/if}}
 </ul>
+
 <div class="cart-actions">
   <button id="clear-cart" class="btn-clear-cart">Vaciar carrito</button>
   <button id="finalize-purchase" class="btn-finalize">Finalizar compra</button>
@@ -22,3 +23,4 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/cart.js"></script>
+

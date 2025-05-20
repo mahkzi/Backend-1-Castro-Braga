@@ -1,119 +1,105 @@
-const fs = require('fs');
-const path = require('path');
-const productModel = require("../src/models/product.model");
-const { getProductById } = require("./productManager");
+const Cart = require("../src/models/cart.model");
+const Product = require('../src/models/product.model');
 
+const CART_ID = '...'; 
 
-const pathCarts = path.join(__dirname, "../data/cart.json");
-
-function loadCart() {
-    if (!fs.existsSync(pathCarts)) {
-      fs.writeFileSync(pathCarts, JSON.stringify([]));
-    }
-    const info = fs.readFileSync(pathCarts, 'utf-8');
-  return JSON.parse(info);
-}
-
-
-function saveCart(cart) {
-    fs.writeFileSync(pathCarts, JSON.stringify(cart));
-  }
-
-  function createCart(){
-    const carts = loadCart();
-    const newId = carts.length > 0 ? carts[carts.length - 1].id + 1 : 1;
-    const newCart = {id : newId, products:[]};
-    carts.push(newCart);
-    saveCart(carts);
+async function getOrCreateCart() {
+  if (!CART_ID) {
+    const newCart = await Cart.create({ products: [] });
     return newCart;
   }
-  function getCartById(cid){
-    const carts = loadCart();
-    return carts.find(cart => cart.id === cid);
-  };
-
- async function addProductToCart(cid, pid) {
-  const carts = loadCart();
-  const cart = carts.find(c => c.id === cid);
+  const cart = await Cart.findById(CART_ID).populate('products.product').lean();
   if (!cart) {
-    console.log(`Carrito con ID ${cid} no encontrado`);
-    return null;
+    const newCart = await Cart.create({ products: [] });
+    return newCart;
   }
+  return cart;
+}
 
-   const producto = await getProductById(pid);
-  if (!producto) {
-    console.log(`Producto con ID ${pid} no encontrado`);
-    return null;
+async function createCart() {
+  const cart = new Cart({ products: [] });
+  return await cart.save();
+}
+
+async function getCartById(cartId) {
+  let cart = await Cart.findById(cartId).populate('products.product');
+   console.log(JSON.stringify(cart, null, 2));
+  if (!cart) {
+    cart = await Cart.create({ products: [] });
   }
+  return cart;
+}
 
-  const productIndex = cart.products.findIndex(
-    (p) => String(p.product) === String(pid)
-  );
+async function addProductToCart(cartId, productId) {
+  const cart = await Cart.findById(cartId);
+  const product = await Product.findById(productId);
 
-  if (productIndex !== -1) {
-    if (cart.products[productIndex].quantity + 1 > producto.stock) {
-      console.log(`No se puede agregar más del stock disponible`);
-      return null;
-    }
-    cart.products[productIndex].quantity += 1;
+  if (!product || product.stock <= 0) throw new Error('Producto no disponible');
+
+  const existing = cart.products.find(p => p.product.equals(productId));
+
+  if (existing) {
+    existing.quantity += 1;
   } else {
-    if (producto.stock < 1) {
-      console.log(`No hay stock disponible`);
-      return null;
-    }
-    cart.products.push({
-      product: pid,
-      nombre: producto.nombre,
-      precio: producto.precio,
-      quantity: 1,
-    });
+    cart.products.push({ product: productId, quantity: 1 });
   }
 
-  saveCart(carts);
-  return cart;
+ await cart.save();
+  return await Cart.findById(cartId).populate('products.product').lean();
 }
-function decreaseProductInCart(cid, pid) {
-  const carts = loadCart();
-  const cart = carts.find(c => c.id === cid);
-  if (!cart) return;
 
-  const index = cart.products.findIndex(p => p.product === pid);
-  if (index === -1) return;
+async function updateQuantity(cartId, productId, delta) {
+  const cart = await Cart.findById(cartId);
+  const product = await Product.findById(productId);
 
-  if (cart.products[index].quantity > 1) {
-    cart.products[index].quantity -= 1;
+  const item = cart.products.find(p => p.product.equals(productId));
+  if (!item) throw new Error('Producto no está en el carrito');
+
+  if (delta > 0 && product.stock >= item.quantity + 1) {
+    item.quantity += 1;
+  } else if (delta < 0 && item.quantity > 1) {
+    item.quantity -= 1;
   } else {
-    cart.products.splice(index, 1); 
+    cart.products = cart.products.filter(p => !p.product.equals(productId));
   }
 
-  saveCart(carts);
-  return cart;
+  return await cart.save();
 }
 
-function removeProductFromCart(cid, pid) {
-  const carts = loadCart();
-  const cart = carts.find(c => c.id === cid);
-  if (!cart) return;
-
-  cart.products = cart.products.filter(p => p.product !== pid);
-  saveCart(carts);
-  return cart;
+async function removeProduct(cartId, productId) {
+  const cart = await Cart.findById(cartId);
+  cart.products = cart.products.filter(p => !p.product.equals(productId));
+  return await cart.save();
 }
-function clearCart(cid) {
-  const carts = loadCart();
-  const cart = carts.find(c => c.id === cid);
-  if (cart) {
-    cart.products = [];
-    saveCart(carts);
+
+async function clearCart(cartId) {
+  const cart = await Cart.findById(cartId);
+  cart.products = [];
+  return await cart.save();
+}
+
+async function finalizePurchase(cartId) {
+  const cart = await Cart.findById(cartId);
+  for (const item of cart.products) {
+    const product = await Product.findById(item.product);
+    if (product.stock >= item.quantity) {
+      product.stock -= item.quantity;
+      await product.save();
+    } else {
+      throw new Error(`Stock insuficiente para ${product.title}`);
+    }
   }
-  return cart;
+  cart.products = [];
+  return await cart.save();
 }
 
-  module.exports = {
-    createCart,
-    getCartById,
-    addProductToCart,
-    decreaseProductInCart,
-    removeProductFromCart,
-    clearCart
-  };
+module.exports = {
+  createCart,
+  getCartById,
+  addProductToCart,
+  updateQuantity,
+  removeProduct,
+  clearCart,
+  finalizePurchase,
+  getOrCreateCart
+};

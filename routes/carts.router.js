@@ -1,54 +1,51 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { addProductToCart, getCartById, clearCart } = require("../managers/cartManager");
-const productModel = require("../src/models/product.model.js"); 
+const cartManager = require('../managers/cartManager');
 
+const CART_ID = '682c903dacf893fbe6f80b29'; 
 
-router.post("/api/carts/:cid/products/:pid", async (req, res) => {
-  const cid = parseInt(req.params.cid); 
-  const pid = req.params.pid; 
+router.get('/', async (req, res) => {
+  const cart = await cartManager.getCartById(CART_ID);
+  res.render('cart', { cart });
+});
+router.post('/api/carts/:cid/products/:pid', async (req, res) => {
   try {
-    const updatedCart = await addProductToCart(cid, pid);
-    if (!updatedCart) {
-      return res.status(400).send({ error: "Su pedido a superado el stock disponible" });
-    }
-    res.status(200).send({ message: "El producto se ha agregado correctamente", cart: updatedCart });
+    const cart = await cartManager.addProductToCart(req.params.cid, req.params.pid);
+    res.json({ message: 'Producto agregado', cart });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Error interno del servidor" });
+    res.status(500).json({ error: error.message });
   }
 });
 
-router.post("/api/carts/:cid/purchase", async (req, res) => {
-    const cid = parseInt(req.params.cid);
-    const cart = getCartById(cid);
 
-    if (!cart || !cart.products.length) {
-        return res.status(400).json({ error: "El carrito está vacío" });
-    }
-
-    try {
-        for (const item of cart.products) {
-            const producto = await productModel.findById(item.product);
-            if (!producto) continue;
-
-            if (producto.stock < item.quantity) {
-                return res.status(400).json({
-                    error: `Stock insuficiente para el producto ${producto.nombre}`,
-                });
-            }
-
-            producto.stock -= item.quantity;
-            await producto.save();
-        }
-
-        clearCart(cid);
-
-        res.status(200).json({ message: "Compra realizada con éxito" });
-    } catch (error) {
-        console.error("Error al finalizar compra:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
+router.post('/add/:pid', async (req, res) => {
+  await cartManager.addProductToCart(CART_ID, req.params.pid);
+  res.sendStatus(200);
 });
+
+router.post('/remove/:pid', async (req, res) => {
+  await cartManager.removeProductFromCart(CART_ID, req.params.pid);
+  res.sendStatus(200);
+});
+
+router.post('/decrease/:pid', async (req, res) => {
+  await cartManager.decreaseProductQty(CART_ID, req.params.pid);
+  res.sendStatus(200);
+});
+
+router.post('/clear', async (req, res) => {
+  await cartManager.clearCart(CART_ID);
+  res.sendStatus(200);
+});
+
+router.post('/api/carts/:cid/finalize', async (req, res) => {
+  try {
+    await cartManager.finalizePurchase(req.params.cid);
+    res.json({ message: 'Compra finalizada correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 module.exports = router;
