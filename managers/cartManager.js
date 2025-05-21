@@ -92,7 +92,6 @@ async function finalizePurchase(cartId) {
   cart.products = [];
   return await cart.save();
 }
-
 module.exports = {
   createCart,
   getCartById,
