@@ -110,7 +110,6 @@ function attachButtonListeners() {
       socket.emit('decreaseProduct', pid);
     };
   });
-
   document.querySelectorAll('.btn-remove').forEach(button => {
     button.onclick = () => {
       const pid = button.dataset.id;
